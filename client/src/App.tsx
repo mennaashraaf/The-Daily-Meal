@@ -12,6 +12,7 @@ import RecipesPage from "@/pages/recipes/index";
 import RecipeDetailPage from "@/pages/recipes/[id]";
 import NewRecipePage from "@/pages/recipes/new";
 import ProfilePage from "@/pages/profile/index";
+import CategoriesPage from "@/pages/categories/index";
 import AiChefPage from "@/pages/ai-chef";
 import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
@@ -29,6 +30,7 @@ function App() {
             <Route path="/recipes" component={RecipesPage} />
             <Route path="/recipes/:id" component={RecipeDetailPage} />
             <Route path="/recipes/new" component={NewRecipePage} />
+            <Route path="/categories" component={CategoriesPage} />
             <Route path="/profile" component={ProfilePage} />
             <Route path="/ai-chef" component={AiChefPage} />
             <Route path="/auth/login" component={LoginPage} />
