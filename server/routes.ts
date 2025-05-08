@@ -11,24 +11,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API router
   const apiRouter = express.Router();
   
-  // Register route modules
-  apiRouter.use("/auth", authRoutes);
-  apiRouter.use("/recipes", recipeRoutes);
-  apiRouter.use("/categories", categoryRoutes);
-  apiRouter.use("/ai", aiRoutes);
-  
-  // Special routes for kitchens
-  apiRouter.get("/categories/kitchens", async (req, res, next) => {
+  // IMPORTANT: Add custom kitchen routes BEFORE registering the category routes
+  // This is to ensure our specific route doesn't get caught by the general route handler
+  apiRouter.get("/categories/kitchens", async (req, res) => {
     try {
       const kitchens = await storage.getKitchens();
       res.json(kitchens);
     } catch (error) {
-      next(error);
+      console.error("Error fetching kitchens:", error);
+      res.status(500).json({ message: "Error fetching kitchens" });
     }
   });
   
-  // Get kitchen by ID
-  apiRouter.get("/categories/kitchens/:id", async (req, res, next) => {
+  // Get kitchen by ID - must be added before the other routes
+  apiRouter.get("/categories/kitchens/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -42,9 +38,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(kitchen);
     } catch (error) {
-      next(error);
+      console.error("Error fetching kitchen by ID:", error);
+      res.status(500).json({ message: "Error fetching kitchen" });
     }
   });
+  
+  // Register other route modules
+  apiRouter.use("/auth", authRoutes);
+  apiRouter.use("/recipes", recipeRoutes);
+  apiRouter.use("/categories", categoryRoutes);
+  apiRouter.use("/ai", aiRoutes);
   
   // Mount API router with /api prefix
   app.use("/api", apiRouter);
