@@ -11,8 +11,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API router
   const apiRouter = express.Router();
   
-  // IMPORTANT: Add custom kitchen routes BEFORE registering the category routes
-  // This is to ensure our specific route doesn't get caught by the general route handler
+  // Standalone kitchen routes
+  apiRouter.get("/kitchens", async (req, res) => {
+    try {
+      const kitchens = await storage.getKitchens();
+      res.json(kitchens);
+    } catch (error) {
+      console.error("Error fetching kitchens:", error);
+      res.status(500).json({ message: "Error fetching kitchens" });
+    }
+  });
+  
+  // Get kitchen by ID
+  apiRouter.get("/kitchens/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid kitchen ID" });
+      }
+      
+      const kitchen = await storage.getKitchen(id);
+      if (!kitchen) {
+        return res.status(404).json({ message: "Kitchen not found" });
+      }
+      
+      res.json(kitchen);
+    } catch (error) {
+      console.error("Error fetching kitchen by ID:", error);
+      res.status(500).json({ message: "Error fetching kitchen" });
+    }
+  });
+  
+  // Keeping the old routes for backward compatibility
   apiRouter.get("/categories/kitchens", async (req, res) => {
     try {
       const kitchens = await storage.getKitchens();
