@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Helmet } from "react-helmet-async";
 import { categoryAPI } from "@/lib/api";
-import { Category } from "@/lib/types";
+import { Category, Kitchen } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CategoriesPage() {
@@ -18,11 +17,6 @@ export default function CategoriesPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Categories | The Daily Meal</title>
-        <meta name="description" content="Explore recipe categories and cuisines from around the world on The Daily Meal." />
-      </Helmet>
-
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl md:text-4xl font-heading font-bold mb-8 text-center">Categories</h1>
         
