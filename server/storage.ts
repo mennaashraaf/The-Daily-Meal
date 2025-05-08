@@ -538,6 +538,26 @@ export class MemStorage implements IStorage {
   }
   
   async getKitchens(): Promise<Kitchen[]> {
+    // If there are no kitchens in the storage, add some
+    if (this.kitchens.size === 0) {
+      // Re-seed kitchens if they weren't properly created initially
+      const kitchens = [
+        { name: "Italian", description: "Mediterranean classics", image_url: "https://images.unsplash.com/photo-1498579150354-977475b7ea0b" },
+        { name: "Thai", description: "Aromatic and spicy", image_url: "https://images.unsplash.com/photo-1559314809-0d155014e29e" },
+        { name: "Mexican", description: "Bold and vibrant", image_url: "https://images.unsplash.com/photo-1464219551459-ac14ae01fbe0" },
+        { name: "Indian", description: "Rich and flavorful", image_url: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40" },
+        { name: "American", description: "Comfort classics", image_url: "https://images.unsplash.com/photo-1550317138-10000687a72b" }
+      ];
+      
+      kitchens.forEach(kitchen => {
+        this.createKitchen({
+          name: kitchen.name,
+          description: kitchen.description,
+          image_url: kitchen.image_url
+        });
+      });
+    }
+    
     return Array.from(this.kitchens.values());
   }
   
