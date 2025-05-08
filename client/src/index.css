@@ -1,9 +1,9 @@
+/* Font import for the specific fonts from design reference */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Font import for the specific fonts from design reference */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&display=swap');
 
 :root {
   --background: 0 0% 100%;
