@@ -91,7 +91,7 @@ export class MemStorage implements IStorage {
   }
   
   private seedData() {
-    // Seed categories
+    // Seed categories - Expanded with more options
     const categories = [
       { name: "Breakfast", description: "Start your day right", image_url: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666" },
       { name: "Lunch", description: "Midday meals", image_url: "https://images.unsplash.com/photo-1547496502-affa22d38842" },
@@ -99,7 +99,16 @@ export class MemStorage implements IStorage {
       { name: "Desserts", description: "Sweet treats", image_url: "https://images.unsplash.com/photo-1488477304112-4944851de03d" },
       { name: "Salads", description: "Fresh and healthy", image_url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd" },
       { name: "Pasta", description: "Italian comfort", image_url: "https://images.unsplash.com/photo-1567608285969-48e4bbe0d399" },
-      { name: "Vegetarian", description: "Meat-free options", image_url: "https://images.unsplash.com/photo-1540420773420-3366772f4999" }
+      { name: "Vegetarian", description: "Meat-free options", image_url: "https://images.unsplash.com/photo-1540420773420-3366772f4999" },
+      { name: "Soups", description: "Warm and comforting", image_url: "https://images.unsplash.com/photo-1547592166-23ac45744acd" },
+      { name: "Grilled", description: "Charred perfection", image_url: "https://images.unsplash.com/photo-1558030006-450675393462" },
+      { name: "Seafood", description: "Treasures from the ocean", image_url: "https://images.unsplash.com/photo-1579164401270-2c67013e7ad8" },
+      { name: "Appetizers", description: "Start your meal right", image_url: "https://images.unsplash.com/photo-1541529086526-db283c563270" },
+      { name: "Quick & Easy", description: "For busy weeknights", image_url: "https://images.unsplash.com/photo-1505253149613-112d21d9f6a9" },
+      { name: "Baking", description: "Oven-made delights", image_url: "https://images.unsplash.com/photo-1486427944299-d1955d23e34d" },
+      { name: "Healthy", description: "Nutritious and delicious", image_url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061" },
+      { name: "Slow Cooker", description: "Set it and forget it", image_url: "https://images.unsplash.com/photo-1620486443824-1983359e68d3" },
+      { name: "Snacks", description: "Bite-sized treats", image_url: "https://images.unsplash.com/photo-1566478989037-eec170784d0b" }
     ];
     
     categories.forEach(category => {
@@ -110,13 +119,24 @@ export class MemStorage implements IStorage {
       });
     });
     
-    // Seed kitchens/cuisines
+    // Seed kitchens/cuisines - Expanded with more cuisines
     const kitchens = [
       { name: "Italian", description: "Mediterranean classics", image_url: "https://images.unsplash.com/photo-1498579150354-977475b7ea0b" },
       { name: "Thai", description: "Aromatic and spicy", image_url: "https://images.unsplash.com/photo-1559314809-0d155014e29e" },
       { name: "Mexican", description: "Bold and vibrant", image_url: "https://images.unsplash.com/photo-1464219551459-ac14ae01fbe0" },
       { name: "Indian", description: "Rich and flavorful", image_url: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40" },
-      { name: "American", description: "Comfort classics", image_url: "https://images.unsplash.com/photo-1550317138-10000687a72b" }
+      { name: "American", description: "Comfort classics", image_url: "https://images.unsplash.com/photo-1550317138-10000687a72b" },
+      { name: "Chinese", description: "Ancient culinary traditions", image_url: "https://images.unsplash.com/photo-1563245372-f21724e3856d" },
+      { name: "Japanese", description: "Precise and artistic", image_url: "https://images.unsplash.com/photo-1553621042-f6e147245754" },
+      { name: "Mediterranean", description: "Coastal flavors", image_url: "https://images.unsplash.com/photo-1544025162-d76694265947" },
+      { name: "French", description: "Sophisticated techniques", image_url: "https://images.unsplash.com/photo-1551218808-94e220e084d2" },
+      { name: "Middle Eastern", description: "Ancient spice routes", image_url: "https://images.unsplash.com/photo-1554998171-89445e31c52b" },
+      { name: "Greek", description: "Olive oil and herbs", image_url: "https://images.unsplash.com/photo-1559742811-822873691df8" },
+      { name: "Spanish", description: "Tapas and paella", image_url: "https://images.unsplash.com/photo-1515443961218-a51367888e4b" },
+      { name: "Korean", description: "Bold and fermented", image_url: "https://images.unsplash.com/photo-1532347231146-80afc9e3df2b" },
+      { name: "Vietnamese", description: "Fresh and balanced", image_url: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43" },
+      { name: "Caribbean", description: "Tropical fusion", image_url: "https://images.unsplash.com/photo-1610832958506-aa56368176cf" },
+      { name: "Brazilian", description: "South American flair", image_url: "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0" }
     ];
     
     kitchens.forEach(kitchen => {
