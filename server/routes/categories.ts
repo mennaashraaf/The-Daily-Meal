@@ -81,6 +81,16 @@ router.get("/kitchens", async (req, res, next) => {
   }
 });
 
+// Alternate route for kitchens that matches the client's API requests
+router.get("/api/categories/kitchens", async (req, res, next) => {
+  try {
+    const kitchens = await storage.getKitchens();
+    res.json(kitchens);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Get a specific kitchen/cuisine
 router.get("/kitchens/:id", async (req, res, next) => {
   try {
