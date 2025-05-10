@@ -3,27 +3,69 @@ import { z } from "zod";
 import fetch from "node-fetch";
 import { storage } from "../storage";
 import { isAuthenticated } from "./auth";
-import OpenAI from "openai";
+import { db } from "../db";
+import { aiInteractions } from "@shared/schema";
+import session from "express-session";
 
 const router = express.Router();
 
-// Initialize OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Mock AI responses database
+const mockRecipeResponses = [
+  {
+    prompt: "cookies",
+    response: "I'd love to help you make delicious cookies! Here's a simple chocolate chip cookie recipe:\n\nIngredients:\n- 1 cup (2 sticks) unsalted butter, softened\n- 3/4 cup granulated sugar\n- 3/4 cup packed brown sugar\n- 2 large eggs\n- 2 teaspoons vanilla extract\n- 2 1/4 cups all-purpose flour\n- 1 teaspoon baking soda\n- 1/2 teaspoon salt\n- 2 cups chocolate chips\n\nInstructions:\n1. Preheat oven to 375°F (190°C)\n2. Cream butter and sugars until light and fluffy\n3. Beat in eggs and vanilla\n4. Mix dry ingredients separately, then gradually add to wet mixture\n5. Fold in chocolate chips\n6. Drop by rounded tablespoons onto ungreased baking sheets\n7. Bake for 9-11 minutes until golden brown\n8. Cool on wire racks\n\nEnjoy your homemade cookies!\n\nChef Rania"
+  },
+  {
+    prompt: "pasta",
+    response: "Pasta is a wonderful choice! Here's a quick and tasty pasta recipe:\n\nClassic Spaghetti Aglio e Olio\n\nIngredients:\n- 1 pound spaghetti\n- 6 cloves garlic, thinly sliced\n- 1/2 cup extra virgin olive oil\n- 1/2 teaspoon red pepper flakes\n- 1/4 cup fresh parsley, chopped\n- Salt to taste\n- Grated Parmesan cheese (optional)\n\nInstructions:\n1. Cook spaghetti in salted water according to package directions until al dente\n2. While pasta cooks, heat olive oil in a skillet over medium heat\n3. Add sliced garlic and cook until lightly golden (about 2 minutes)\n4. Add red pepper flakes and cook for 30 seconds more\n5. Drain pasta, reserving 1/4 cup cooking water\n6. Add pasta to the skillet with garlic oil\n7. Toss well, adding reserved pasta water if needed\n8. Sprinkle with parsley and serve with Parmesan if desired\n\nEnjoy this simple but delicious pasta dish!\n\nChef Rania"
+  },
+  {
+    prompt: "chicken",
+    response: "Chicken is so versatile! Here's an easy and flavorful roast chicken recipe:\n\nHerb Roasted Chicken\n\nIngredients:\n- 1 whole chicken (about 4-5 pounds)\n- 2 tablespoons olive oil\n- 2 teaspoons salt\n- 1 teaspoon black pepper\n- 1 teaspoon dried thyme\n- 1 teaspoon dried rosemary\n- 1 teaspoon paprika\n- 1 lemon, quartered\n- 1 head garlic, cut in half crosswise\n- Fresh herbs (optional): rosemary, thyme sprigs\n\nInstructions:\n1. Preheat oven to 425°F (220°C)\n2. Pat chicken dry with paper towels\n3. Mix olive oil with salt, pepper, and dried herbs\n4. Rub mixture all over chicken, including under skin\n5. Stuff cavity with lemon quarters, garlic, and fresh herbs if using\n6. Tie legs together with kitchen string and tuck wing tips under body\n7. Place in roasting pan and roast for 1 hour 15 minutes, or until internal temperature reaches 165°F\n8. Let rest for 15 minutes before carving\n\nServe with roasted vegetables for a complete meal!\n\nChef Rania"
+  },
+  {
+    prompt: "dessert",
+    response: "I'd be happy to share a simple yet impressive dessert recipe with you!\n\nEasy No-Bake Chocolate Mousse\n\nIngredients:\n- 8 oz (about 1 1/2 cups) semi-sweet chocolate chips\n- 2 cups heavy whipping cream, divided\n- 1/4 cup sugar\n- 1 teaspoon vanilla extract\n- Pinch of salt\n- Fresh berries and mint for garnish (optional)\n\nInstructions:\n1. Place chocolate chips in a medium bowl\n2. Heat 1/2 cup cream until just simmering, then pour over chocolate\n3. Let sit for 1 minute, then stir until smooth; let cool to room temperature\n4. In a separate bowl, whip remaining 1 1/2 cups cream with sugar, vanilla, and salt until soft peaks form\n5. Gently fold whipped cream into chocolate mixture until no streaks remain\n6. Spoon into serving glasses and refrigerate for at least 2 hours\n7. Garnish with fresh berries and mint before serving\n\nEnjoy this decadent dessert!\n\nChef Rania"
+  },
+  {
+    prompt: "vegan",
+    response: "Here's a delicious vegan recipe that everyone will love!\n\nRoasted Vegetable Buddha Bowl\n\nIngredients:\n- 1 cup quinoa, rinsed\n- 2 cups vegetable broth\n- 1 sweet potato, diced\n- 1 red bell pepper, sliced\n- 1 zucchini, sliced\n- 1 red onion, cut into wedges\n- 2 tablespoons olive oil\n- 1 teaspoon cumin\n- 1 teaspoon paprika\n- 1/2 teaspoon garlic powder\n- Salt and pepper to taste\n- 1 can (15 oz) chickpeas, drained and rinsed\n- 1 avocado, sliced\n- 2 cups fresh spinach\n\nFor the tahini dressing:\n- 1/4 cup tahini\n- 2 tablespoons lemon juice\n- 1 tablespoon maple syrup\n- Water to thin as needed\n\nInstructions:\n1. Cook quinoa in vegetable broth according to package directions\n2. Preheat oven to 425°F (220°C)\n3. Toss sweet potato, bell pepper, zucchini, and onion with olive oil, spices, salt, and pepper\n4. Roast vegetables for 20-25 minutes until tender\n5. Mix tahini, lemon juice, maple syrup, and enough water to reach desired consistency\n6. Assemble bowls: quinoa, roasted vegetables, chickpeas, avocado, and spinach\n7. Drizzle with tahini dressing and serve\n\nEnjoy this nutritious vegan meal!\n\nChef Rania"
+  },
+  {
+    prompt: "breakfast",
+    response: "Good morning! Here's a delicious breakfast recipe to start your day:\n\nFluffy Blueberry Pancakes\n\nIngredients:\n- 1 1/2 cups all-purpose flour\n- 2 tablespoons sugar\n- 1 tablespoon baking powder\n- 1/2 teaspoon salt\n- 1 1/4 cups milk\n- 1 large egg\n- 3 tablespoons melted butter, plus more for cooking\n- 1 teaspoon vanilla extract\n- 1 cup fresh blueberries\n- Maple syrup for serving\n\nInstructions:\n1. In a large bowl, whisk together flour, sugar, baking powder, and salt\n2. In another bowl, whisk milk, egg, melted butter, and vanilla\n3. Pour wet ingredients into dry ingredients and stir just until combined (small lumps are fine)\n4. Gently fold in blueberries\n5. Heat a non-stick pan or griddle over medium heat and add a small amount of butter\n6. Pour 1/4 cup batter for each pancake\n7. Cook until bubbles form on top (about 2-3 minutes), then flip and cook another 1-2 minutes\n8. Serve warm with maple syrup\n\nEnjoy your breakfast!\n\nChef Rania"
+  }
+];
 
-// Helper function to format AI messages for "Chef Rania"
-function formatAIPrompt(userMessage: string) {
-  return [
-    {
-      role: "system" as const,
-      content: "You are Chef Rania, an AI-powered cooking assistant. Your tone is warm, friendly and encouraging. You specialize in providing recipe suggestions, cooking tips, ingredient substitutions, and step-by-step guidance. Always try to recommend specific recipes based on user queries and include reference links to cooking resources when helpful. Sign off your messages with 'Chef Rania'."
-    },
-    {
-      role: "user" as const,
-      content: userMessage
+// Function to find a matching response or provide a default
+function getMockResponse(userQuery: string): string {
+  const normalizedQuery = userQuery.toLowerCase();
+  
+  // Try to find a specific recipe match
+  for (const entry of mockRecipeResponses) {
+    if (normalizedQuery.includes(entry.prompt)) {
+      return entry.response;
     }
-  ];
+  }
+  
+  // Default general response
+  return "I'd be happy to help with your cooking questions! What kind of recipe are you looking for today? I can suggest recipes for breakfast, lunch, dinner, desserts, or specific ingredients like chicken, pasta, or cookies. Just let me know what you're in the mood for!\n\nChef Rania";
+}
+
+// Function to analyze an image and provide recipe suggestions
+function getMockImageResponse(ingredientList = "", message = "") {
+  // Default detected ingredients if none provided
+  const detectedIngredients = ingredientList ? 
+    ingredientList.split(",").map(i => i.trim()) : 
+    ["tomatoes", "onions", "peppers", "garlic"];
+  
+  const ingredients = detectedIngredients.join(", ");
+  
+  return {
+    detected_ingredients: detectedIngredients,
+    content: `I see you have ${ingredients}! Here are some recipe ideas:\n\n1. **Quick Tomato Sauce**: Sauté chopped onions and garlic in olive oil until translucent. Add diced tomatoes and cook until they break down. Season with salt, pepper, and herbs of your choice.\n\n2. **Stuffed Peppers**: Cut the tops off peppers and remove seeds. Fill with a mixture of cooked rice, sautéed onions, garlic, and tomatoes. Bake until peppers are tender.\n\n3. **Fresh Salsa**: Dice tomatoes, onions, and peppers. Mix with minced garlic, lime juice, salt, and cilantro if available.\n\nWhich recipe would you like to try?\n\nChef Rania`,
+    citations: []
+  };
 }
 
 // Add session type to Express request
@@ -51,36 +93,12 @@ router.post("/chat", isAuthenticated, async (req, res, next) => {
     const { message } = bodySchema.parse(req.body);
     const userId = req.session?.user?.id;
     
-    // Check for OpenAI API key
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    
-    let aiResponse;
-    
-    if (!OPENAI_API_KEY) {
-      // Fallback response if no API key
-      aiResponse = {
-        content: "I'd be happy to help with your cooking questions! Unfortunately, I can't access my full capabilities right now. Please try again later or contact support.\n\nChef Rania",
-        citations: []
-      };
-    } else {
-      // Call OpenAI API
-      try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-          messages: formatAIPrompt(message),
-          temperature: 0.7,
-          max_tokens: 500,
-        });
-        
-        aiResponse = {
-          content: completion.choices[0].message.content || "I'm not sure how to respond to that. Could you try asking in a different way?\n\nChef Rania",
-          citations: [] // OpenAI doesn't provide citations like Perplexity
-        };
-      } catch (apiError: any) {
-        console.error("OpenAI API Error:", apiError);
-        throw new Error(`OpenAI API Error: ${apiError?.message || "Unknown error"}`);
-      }
-    }
+    // Get mock response
+    const responseContent = getMockResponse(message);
+    const aiResponse = {
+      content: responseContent,
+      citations: []
+    };
     
     // Save the interaction to the database if user is logged in
     if (userId) {
@@ -110,55 +128,15 @@ router.post("/image", isAuthenticated, async (req, res, next) => {
     const { image_url, message } = bodySchema.parse(req.body);
     const userId = req.session?.user?.id;
     
-    // For image analysis, we'll use a combination of OpenAI vision capabilities
-    // or we can mock the ingredient detection for now
-    const detectedIngredients = ["tomatoes", "onions", "garlic", "basil"];
-    
-    // Format prompt with detected ingredients
-    const ingredientList = detectedIngredients.join(", ");
-    const userPrompt = message 
-      ? `I have uploaded a photo with these ingredients: ${ingredientList}. ${message}`
-      : `I have uploaded a photo with these ingredients: ${ingredientList}. What recipes can I make with them?`;
-    
-    // Check for OpenAI API key
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    
-    let aiResponse;
-    
-    if (!OPENAI_API_KEY) {
-      // Fallback response if no API key
-      aiResponse = {
-        detected_ingredients: detectedIngredients,
-        content: `I see you have ${ingredientList}! You could make a simple tomato sauce pasta, bruschetta, or a fresh tomato salad with these ingredients. What would you like to cook?\n\nChef Rania`,
-        citations: []
-      };
-    } else {
-      // Call OpenAI API with ingredient prompt
-      try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-          messages: formatAIPrompt(userPrompt),
-          temperature: 0.7,
-          max_tokens: 500,
-        });
-        
-        aiResponse = {
-          detected_ingredients: detectedIngredients,
-          content: completion.choices[0].message.content || "I'm not sure how to analyze these ingredients. Could you try again with a clearer image?\n\nChef Rania",
-          citations: []
-        };
-      } catch (apiError: any) {
-        console.error("OpenAI API Error:", apiError);
-        throw new Error(`OpenAI API Error: ${apiError?.message || "Unknown error"}`);
-      }
-    }
+    // Get mock image analysis response
+    const aiResponse = getMockImageResponse("", message);
     
     // Save the interaction to the database if user is logged in
     if (userId) {
       await storage.createAIInteraction({
         user_id: userId,
         type: "image",
-        query: `Image analysis: ${ingredientList}. ${message || ""}`,
+        query: `Image analysis: ${aiResponse.detected_ingredients.join(", ")}. ${message || ""}`,
         response: aiResponse
       });
     }

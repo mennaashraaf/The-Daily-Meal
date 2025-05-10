@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { recipeAPI } from "@/lib/api";
 import { useAuth } from "@/providers/AuthProvider";
@@ -13,9 +13,37 @@ import RecipeCard from "@/components/recipes/RecipeCard";
 import { Helmet } from "react-helmet";
 
 export default function ProfilePage() {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState("my-recipes");
+  
+  // Set active tab based on URL path
+  const getActiveTabFromPath = () => {
+    if (location.pathname.includes('/profile/favorites')) {
+      return "favorites";
+    } else if (location.pathname.includes('/profile/recipes')) {
+      return "my-recipes";
+    } else {
+      return "my-recipes";
+    }
+  };
+  
+  const [activeTab, setActiveTab] = useState(getActiveTabFromPath());
+  
+  // Update tab when URL changes
+  useEffect(() => {
+    setActiveTab(getActiveTabFromPath());
+  }, [location.pathname]);
+  
+  // Handle tab change and update URL
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === "favorites") {
+      navigate("/profile/favorites");
+    } else if (value === "my-recipes") {
+      navigate("/profile/recipes");
+    }
+  };
   
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -45,6 +73,12 @@ export default function ProfilePage() {
     },
     enabled: !!userRecipes
   });
+  
+  // Handle logout with navigation
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
   
   if (isLoading) {
     return (
@@ -126,7 +160,7 @@ export default function ProfilePage() {
                 <Button
                   variant="ghost"
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={() => logout()}
+                  onClick={handleLogout}
                 >
                   Sign Out
                 </Button>
@@ -135,7 +169,7 @@ export default function ProfilePage() {
           </div>
           
           {/* Tabs Section */}
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="mb-6">
               <TabsTrigger value="my-recipes" className="flex items-center">
                 <BookOpen className="h-4 w-4 mr-2" />

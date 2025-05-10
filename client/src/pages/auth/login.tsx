@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/providers/AuthProvider";
+import { toast } from "@/components/ui/use-toast";
 
 import {
   Form,
@@ -26,12 +27,14 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const [location, navigate] = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, isLoading, login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Get redirect URL from query params
-  const searchParams = new URLSearchParams(location.split("?")[1]);
+  const searchParams = new URLSearchParams(location.search);
   const redirectTo = searchParams.get("redirect") || "/";
   
   // Redirect if already authenticated
@@ -52,10 +55,21 @@ export default function LoginPage() {
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       setIsSubmitting(true);
+      setError(null);
       await login(data);
-      navigate(redirectTo);
+      toast({
+        title: "Success",
+        description: "You have been signed in successfully.",
+      });
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
+      setError(error instanceof Error ? error.message : "Failed to sign in");
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to sign in",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -95,6 +109,12 @@ export default function LoginPage() {
           </CardHeader>
           
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+            
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -150,7 +170,10 @@ export default function LoginPage() {
             <div className="text-center text-sm">
               Don't have an account?{" "}
               <a
-                onClick={() => navigate("/auth/register")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/auth/register");
+                }}
                 className="text-primary hover:underline cursor-pointer"
               >
                 Sign Up

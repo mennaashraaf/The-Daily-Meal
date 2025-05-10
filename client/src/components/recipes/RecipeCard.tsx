@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Heart, Clock } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Recipe } from "@/lib/types";
@@ -114,8 +114,11 @@ export default function RecipeCard({ recipe, isFavorite = false }: RecipeCardPro
             <Clock className="text-primary mr-2 h-4 w-4" />
             <span className="text-sm">{totalTime} mins</span>
           </div>
-          <Link href={`/recipes/${recipe.id}`}>
-            <a className="text-primary hover:text-primary/80 font-medium text-sm">View Recipe</a>
+          <Link 
+            to={`/recipes/${recipe.id}`} 
+            className="text-primary hover:text-primary/80 font-medium text-sm"
+          >
+            View Recipe
           </Link>
         </div>
       </div>

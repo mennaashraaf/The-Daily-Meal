@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { recipeAPI } from "@/lib/api";
 import { Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -133,10 +133,11 @@ export default function RecipeOfTheDay() {
               </div>
               
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <Link href={`/recipes/${recipe.id}`}>
-                  <a className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-full text-center transition block">
-                    View Recipe
-                  </a>
+                <Link 
+                  to={`/recipes/${recipe.id}`} 
+                  className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-full text-center transition block"
+                >
+                  View Recipe
                 </Link>
                 <button className="flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-50 text-neutral-800 font-bold py-2 px-6 rounded-full text-center transition">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-5 w-5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>

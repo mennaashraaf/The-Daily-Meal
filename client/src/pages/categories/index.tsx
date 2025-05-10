@@ -11,7 +11,7 @@ export default function CategoriesPage() {
   });
 
   const { data: kitchens, isLoading: kitchensLoading } = useQuery({
-    queryKey: ['/api/categories/kitchens'],
+    queryKey: ['/api/kitchens'],
     queryFn: categoryAPI.getKitchens
   });
 

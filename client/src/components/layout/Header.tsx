@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Sheet, 
   SheetContent, 
@@ -28,7 +28,8 @@ import {
 import { useAuth } from "@/providers/AuthProvider";
 
 export default function Header() {
-  const [location, navigate] = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchVisible, setMobileSearchVisible] = useState(false);
@@ -40,13 +41,18 @@ export default function Header() {
     }
   };
   
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+  
   return (
     <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-primary text-3xl mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-utensils"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
               </span>
@@ -75,18 +81,18 @@ export default function Header() {
           {/* Navigation */}
           <nav className="flex items-center">
             <div className="hidden md:flex items-center space-x-6">
-              <Link href="/recipes" className="text-neutral-800 hover:text-primary font-medium">
+              <Link to="/recipes" className="text-neutral-800 hover:text-primary font-medium">
                 Recipes
               </Link>
-              <Link href="/categories" className="text-neutral-800 hover:text-primary font-medium">
+              <Link to="/categories" className="text-neutral-800 hover:text-primary font-medium">
                 Categories
               </Link>
               {isAuthenticated && (
-                <Link href="/recipes/new" className="text-neutral-800 hover:text-primary font-medium">
+                <Link to="/recipes/new" className="text-neutral-800 hover:text-primary font-medium">
                   Submit Recipe
                 </Link>
               )}
-              <Link href="/ai-chef" className="text-neutral-800 hover:text-primary font-medium">
+              <Link to="/ai-chef" className="text-neutral-800 hover:text-primary font-medium">
                 Chef Rania
               </Link>
             </div>
@@ -102,7 +108,7 @@ export default function Header() {
               
               {/* Favorites Link */}
               {isAuthenticated && (
-                <Link href="/profile/favorites" className="text-neutral-800 hover:text-primary text-xl">
+                <Link to="/profile/favorites" className="text-neutral-800 hover:text-primary text-xl">
                   <Heart size={24} />
                 </Link>
               )}
@@ -120,46 +126,46 @@ export default function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">
+                      <Link to="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile/recipes">
+                      <Link to="/profile/recipes" className="flex items-center">
                         <FileText className="mr-2 h-4 w-4" />
                         <span>My Recipes</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile/favorites">
+                      <Link to="/profile/favorites" className="flex items-center">
                         <Heart className="mr-2 h-4 w-4" />
                         <span>Favorites</span>
                       </Link>
                     </DropdownMenuItem>
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
-                        <Link href="/admin">
+                        <Link to="/admin" className="flex items-center">
                           <Star className="mr-2 h-4 w-4" />
                           <span>Admin</span>
                         </Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild>
-                      <Link href="/profile/settings">
+                      <Link to="/profile/settings" className="flex items-center">
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Settings</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => logout()}>
+                    <DropdownMenuItem onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign Out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Link href="/auth/login">
+                <Link to="/auth/login">
                   <Button variant="ghost" size="sm">Sign In</Button>
                 </Link>
               )}
@@ -173,16 +179,16 @@ export default function Header() {
                 </SheetTrigger>
                 <SheetContent>
                   <div className="flex flex-col space-y-4 mt-8">
-                    <Link href="/recipes" className="text-lg font-medium py-2">Recipes</Link>
-                    <Link href="/categories" className="text-lg font-medium py-2">Categories</Link>
+                    <Link to="/recipes" className="text-lg font-medium py-2">Recipes</Link>
+                    <Link to="/categories" className="text-lg font-medium py-2">Categories</Link>
                     {isAuthenticated && (
-                      <Link href="/recipes/new" className="text-lg font-medium py-2">Submit Recipe</Link>
+                      <Link to="/recipes/new" className="text-lg font-medium py-2">Submit Recipe</Link>
                     )}
-                    <Link href="/ai-chef" className="text-lg font-medium py-2">Chef Rania</Link>
+                    <Link to="/ai-chef" className="text-lg font-medium py-2">Chef Rania</Link>
                     {!isAuthenticated && (
                       <>
-                        <Link href="/auth/login" className="text-lg font-medium py-2">Sign In</Link>
-                        <Link href="/auth/register" className="text-lg font-medium py-2">Sign Up</Link>
+                        <Link to="/auth/login" className="text-lg font-medium py-2">Sign In</Link>
+                        <Link to="/auth/register" className="text-lg font-medium py-2">Sign Up</Link>
                       </>
                     )}
                   </div>

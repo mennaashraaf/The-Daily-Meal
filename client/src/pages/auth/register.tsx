@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,12 +32,13 @@ const registerSchema = z.object({
 });
 
 export default function RegisterPage() {
-  const [location, navigate] = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, isLoading, register } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Get redirect URL from query params
-  const searchParams = new URLSearchParams(location.split("?")[1]);
+  const searchParams = new URLSearchParams(location.search);
   const redirectTo = searchParams.get("redirect") || "/";
   
   // Redirect if already authenticated
@@ -62,7 +63,7 @@ export default function RegisterPage() {
     try {
       setIsSubmitting(true);
       await register(data);
-      navigate(redirectTo);
+      navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
     } finally {
@@ -194,7 +195,10 @@ export default function RegisterPage() {
             <div className="text-center text-sm">
               Already have an account?{" "}
               <a
-                onClick={() => navigate("/auth/login")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/auth/login");
+                }}
                 className="text-primary hover:underline cursor-pointer"
               >
                 Sign In

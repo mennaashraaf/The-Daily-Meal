@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { recipeAPI } from "@/lib/api";
 import RecipeCard from "@/components/recipes/RecipeCard";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -123,11 +123,12 @@ export default function FeaturedRecipes() {
         </div>
         
         <div className="mt-10 text-center">
-          <Link href="/recipes">
-            <a className="inline-flex items-center font-bold text-primary hover:text-primary/80">
-              View All Recipes
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
+          <Link 
+            to="/recipes" 
+            className="inline-flex items-center font-bold text-primary hover:text-primary/80"
+          >
+            View All Recipes
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
         </div>
       </div>

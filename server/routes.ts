@@ -42,37 +42,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Keeping the old routes for backward compatibility
-  apiRouter.get("/categories/kitchens", async (req, res) => {
-    try {
-      const kitchens = await storage.getKitchens();
-      res.json(kitchens);
-    } catch (error) {
-      console.error("Error fetching kitchens:", error);
-      res.status(500).json({ message: "Error fetching kitchens" });
-    }
-  });
-  
-  // Get kitchen by ID - must be added before the other routes
-  apiRouter.get("/categories/kitchens/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid kitchen ID" });
-      }
-      
-      const kitchen = await storage.getKitchen(id);
-      if (!kitchen) {
-        return res.status(404).json({ message: "Kitchen not found" });
-      }
-      
-      res.json(kitchen);
-    } catch (error) {
-      console.error("Error fetching kitchen by ID:", error);
-      res.status(500).json({ message: "Error fetching kitchen" });
-    }
-  });
-  
   // Register other route modules
   apiRouter.use("/auth", authRoutes);
   apiRouter.use("/recipes", recipeRoutes);
@@ -83,7 +52,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", apiRouter);
   
   // Error handling for API routes
-  app.use("/api", (err, req, res, next) => {
+  app.use("/api", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(err);
     res.status(err.status || 500).json({
       message: err.message || "Internal Server Error"

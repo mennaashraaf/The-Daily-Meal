@@ -164,17 +164,17 @@ export const categoryAPI = {
   },
   
   getKitchens: async (): Promise<Kitchen[]> => {
-    const res = await apiRequest("GET", "/api/categories/kitchens");
+    const res = await apiRequest("GET", "/api/kitchens");
     return res.json();
   },
   
   getKitchen: async (id: number): Promise<Kitchen> => {
-    const res = await apiRequest("GET", `/api/categories/kitchens/${id}`);
+    const res = await apiRequest("GET", `/api/kitchens/${id}`);
     return res.json();
   },
   
   createKitchen: async (kitchenData: Omit<Kitchen, 'id'>): Promise<Kitchen> => {
-    const res = await apiRequest("POST", "/api/categories/kitchens", kitchenData);
+    const res = await apiRequest("POST", "/api/kitchens", kitchenData);
     return res.json();
   }
 };

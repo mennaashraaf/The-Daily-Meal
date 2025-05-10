@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { categoryAPI } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -51,20 +51,22 @@ export default function Categories() {
         <h2 className="font-heading text-3xl font-bold text-neutral-800 mb-8">Popular Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {categories.map((category) => (
-            <Link key={category.id} href={`/recipes?category=${category.id}`}>
-              <a className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer">
-                <div className="h-36 overflow-hidden">
-                  <img 
-                    src={category.image_url || `https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`} 
-                    alt={`${category.name} category`} 
-                    className="w-full h-full object-cover hover:scale-110 transition"
-                  />
-                </div>
-                <div className="p-4 text-center">
-                  <h3 className="font-heading font-medium">{category.name}</h3>
-                  <p className="text-sm text-gray-600">{category.recipe_count} recipes</p>
-                </div>
-              </a>
+            <Link 
+              key={category.id} 
+              to={`/recipes?category=${category.id}`}
+              className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
+            >
+              <div className="h-36 overflow-hidden">
+                <img 
+                  src={category.image_url || `https://images.unsplash.com/photo-1495521821757-a1efb6729352?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`} 
+                  alt={`${category.name} category`} 
+                  className="w-full h-full object-cover hover:scale-110 transition"
+                />
+              </div>
+              <div className="p-4 text-center">
+                <h3 className="font-heading font-medium">{category.name}</h3>
+                <p className="text-sm text-gray-600">{category.recipe_count} recipes</p>
+              </div>
             </Link>
           ))}
         </div>
