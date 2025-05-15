@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-The Daily Meal is a full-stack web application for cooking enthusiasts and home chefs. It serves as a platform for discovering, sharing, and organizing recipes. The application features a modern, responsive UI and incorporates AI assistance for recipe suggestions and cooking tips.
+The Daily Meal is an application for cooking enthusiasts and home chefs. It serves as a platform for discovering, sharing, and organizing recipes. The application features a modern, responsive UI and incorporates AI assistance for recipe suggestions and cooking tips.
 
 ## Business Goals
 
@@ -188,19 +188,6 @@ The application is designed to be deployed to any modern hosting platform suppor
 - API endpoints are protected based on user roles
 - CORS is configured for API access
 - Input validation is performed on all user inputs
-
-## Future Enhancements
-
-- Social sharing capabilities
-- Meal planning calendar
-- Grocery list generation
-- Nutritional information for recipes
-- Mobile application using React Native
-- Advanced search with filtering options
-- Recipe version history
-- Community forums
-
-## Troubleshooting
 
 ### Common Issues
 - Database connection errors: Check environment variables for proper database URL
