@@ -1,6 +1,5 @@
 # The Daily Meal
 
-A full-stack web application for cooking recipes and meal planning.
 
 ## Features
 
